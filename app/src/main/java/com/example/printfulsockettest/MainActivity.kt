@@ -17,13 +17,14 @@ import com.example.printfulsockettest.databinding.ActivityMainBinding
 import com.example.printfulsockettest.main.MainViewModel
 import com.example.printfulsockettest.main.ViewModelFactory
 import com.example.printfulsockettest.sync.LoadData
+import com.example.printfulsockettest.sync.TcpClient
 import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.net.Socket
 import java.net.UnknownHostException
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(){
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
@@ -58,37 +59,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        //viewModel.connectToServer()
-        val loadData = LoadData()
-        loadData.execute()
+        //ToDo 2: connect to server through TCP or API,
+        //try to connect to server using TCP with AsyncTask but not connecting
+        //http://213.175.74.120/ return an empty string
+        //val loadData = LoadData(this)
+        //loadData.execute()
+        viewModel.connectToServer()
 
 
-    }
-
-    private fun connectToServer(){
-
-        val hostname = "ios-test.printful.lv:6111"
-        val port = 13
-
-        try {
-            Socket(hostname, port).use { socket ->
-                val input: InputStream = socket.getInputStream()
-                val reader = InputStreamReader(input)
-                var character: Int
-                val data = StringBuilder()
-                while (reader.read().also { character = it } != -1) {
-                    data.append(character.toChar())
-                }
-                //println(data)
-                Log.d("shank", "$data")
-            }
-        } catch (ex: UnknownHostException) {
-            //println("Server not found: " + ex.message)
-            Log.d("shank", "Server not found ", ex)
-        } catch (ex: IOException) {
-            //println("I/O error: " + ex.message)
-            Log.d("shank", "I/O error: ", ex)
-        }
     }
 
     override fun onBackPressed() {

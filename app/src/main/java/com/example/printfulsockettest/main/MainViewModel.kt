@@ -3,19 +3,14 @@ package com.example.printfulsockettest.main
 import android.app.Activity
 import android.app.Application
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.example.printfulsockettest.data.Users
+import com.example.printfulsockettest.network.PrintfulAPI
 import com.google.android.gms.maps.model.LatLng
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import java.io.IOException
-import java.io.InputStream
-import java.io.InputStreamReader
-import java.net.Socket
-import java.net.UnknownHostException
+import kotlinx.coroutines.*
+import java.lang.Exception
 
 class MainViewModel (private val activity:Activity, application: Application): AndroidViewModel(application){
 
@@ -93,28 +88,19 @@ class MainViewModel (private val activity:Activity, application: Application): A
 
     //Connects to the server to fetch list of users
     fun connectToServer() {
+        val map = hashMapOf(
+            "authorize" to "angakoko@gmail.com"
+        )
         uiScope.launch {
-            val hostname = "ios-test.printful.lv:6111"
-            val port = 13
+            // Get the Deferred object for our Retrofit request
+            val getResultDiffered = PrintfulAPI.retrofitService.getLocationOfUsersAsync(map)
 
             try {
-                Socket(hostname, 5076).use { socket ->
-                    val input: InputStream = socket.getInputStream()
-                    val reader = InputStreamReader(input)
-                    var character: Int
-                    val data = StringBuilder()
-                    while (reader.read().also { character = it } != -1) {
-                        data.append(character.toChar())
-                    }
-                    //println(data)
-                    Log.d("shank", "$data")
-                }
-            } catch (ex: UnknownHostException) {
-                //println("Server not found: " + ex.message)
-                Log.d("shank", "Server not found ", ex)
-            } catch (ex: IOException) {
-                //println("I/O error: " + ex.message)
-                Log.d("shank", "I/O error: ", ex)
+                val result = getResultDiffered.await()
+                //ToDo result is an emty string, should be looked into
+                Log.d("user_location", result)
+            } catch (e: Exception) {
+                Log.d("user_location", "error", e)
             }
         }
     }

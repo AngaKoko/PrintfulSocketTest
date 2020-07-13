@@ -1,43 +1,30 @@
 package com.example.printfulsockettest.sync
 
+import android.content.Context
 import android.os.AsyncTask
-import android.util.Log
-import java.io.*
-import java.lang.Exception
+import android.widget.Toast
+import com.example.printfulsockettest.sync.TcpClient.OnMessageReceived
+import java.io.DataOutputStream
+import java.io.PrintWriter
 import java.net.Socket
-import java.net.UnknownHostException
 
-class LoadData() : AsyncTask<Void, Void, String>() {
+class LoadData(private val context: Context) : AsyncTask<Void, Void, String>() {
 
-    var s: Socket? = null
-    var dos:DataOutputStream? = null
-    var pw: PrintWriter? = null
+    var tcpClient:TcpClient? = null
 
     override fun doInBackground(vararg params: Void?): String? {
         // ...
-        val hostname = "ios-test.printful.lv:6111"
-        val port = 8080
+        //we create a TCPClient object
+        //we create a TCPClient object
+        tcpClient = TcpClient(OnMessageReceived { message ->
+            //here the messageReceived method is implemented
+            //this method calls the onProgressUpdate
+            Toast.makeText(context.applicationContext, message, Toast.LENGTH_SHORT).show()
+        })
+        tcpClient?.run()
+        tcpClient?.sendMessage("angakoko@gmail.com")
 
-        try {
-            Socket(hostname, port).use { socket ->
-                val input: InputStream = socket.getInputStream()
-                val reader = InputStreamReader(input)
-                var character: Int
-                val data = StringBuilder()
-                while (reader.read().also { character = it } != -1) {
-                    data.append(character.toChar())
-                }
-                //println(data)
-                Log.d("shank", "$data")
-            }
-        } catch (ex: UnknownHostException) {
-            //println("Server not found: " + ex.message)
-            Log.d("shank", "Server not found ", ex)
-        } catch (ex: IOException) {
-            //println("I/O error: " + ex.message)
-            Log.d("shank", "I/O error: ", ex)
-        }
-        return ""
+        return null
     }
 
     override fun onPreExecute() {
@@ -48,5 +35,6 @@ class LoadData() : AsyncTask<Void, Void, String>() {
     override fun onPostExecute(result: String?) {
         super.onPostExecute(result)
         // ...
+        //Toast.makeText(context.applicationContext, " post exe: $result", Toast.LENGTH_SHORT).show()
     }
 }
