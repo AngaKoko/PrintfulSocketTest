@@ -60,7 +60,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycle_version"
     // For java use lifecycle-reactivestreams
-    testImplementation "androidx.arch.core:core-testing:$lifecycle_version"
+    //testImplementation "androidx.arch.core:core-testing:$lifecycle_version"
     implementation 'android.arch.navigation:navigation-fragment:1.0.0'
     implementation 'android.arch.navigation:navigation-ui:1.0.0'
 
